@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Daily Journal</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <meta name="theme-color" content="#0b5cff">
+  <link rel="icon" href="./icons/icon-192.svg">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>Daily Journal</h1>
+    <div class="controls">
+      <button id="btn-export" class="btn">Backup my data</button>
+      <label class="btn btn-import" for="import-file">Restore backup</label>
+      <input id="import-file" type="file" accept="application/json" style="display:none">
+      <button id="btn-install" class="btn">Install</button>
+      <button id="btn-about" class="btn">About / Privacy</button>
+    </div>
+  </header>
+
+  <main id="app">
+    <section id="profile-section" class="card">
+      <h2>Profile</h2>
+      <label for="profile-select">Profile</label>
+      <select id="profile-select" aria-label="Profile"></select>
+      <input id="profile-name" placeholder="New profile name" aria-label="New profile name">
+      <button id="btn-add-profile" class="btn">Add Profile</button>
+      <button id="btn-delete-profile" class="btn danger">Delete Profile</button>
+    </section>
+
+    <section id="entry-section" class="card">
+      <h2>Today's Entry <small id="entry-date"></small></h2>
+
+      <div class="row">
+        <label for="water">Water intake</label>
+        <select id="water" aria-label="Water intake">
+          <option value="1">1L</option>
+          <option value="1.5">1.5L</option>
+          <option value="2">2L</option>
+          <option value="2.5">2.5L</option>
+          <option value="3">3L</option>
+          <option value="3.5">3.5L</option>
+          <option value="4">4L</option>
+          <option value="4.5">4.5L</option>
+        </select>
+      </div>
+
+      <fieldset>
+        <legend>Early Morning Routine</legend>
+        <label><input type="checkbox" id="morning-jeera"> Jeera + saunf water</label>
+        <label><input type="checkbox" id="morning-almonds"> Soaked almonds</label>
+        <label><input type="checkbox" id="morning-raisins"> Soaked raisins</label>
+        <div class="row">
+          <input id="morning-custom" placeholder="Add custom routine item" aria-label="Add custom routine item">
+          <button id="btn-add-custom" class="btn">Add</button>
+        </div>
+        <ul id="custom-list" class="custom-list" aria-live="polite"></ul>
+      </fieldset>
+
+      <fieldset>
+        <legend>Meals</legend>
+        <div class="meal">
+          <label>Breakfast - What did you eat?</label>
+          <input id="breakfast-meal" placeholder="e.g., oats and banana">
+          <label>Calories</label>
+          <input id="breakfast-cal" type="number" min="0">
+          <button class="btn estimate" data-meal="breakfast">Estimate calories</button>
+        </div>
+
+        <div class="meal">
+          <label>Chai - What did you have?</label>
+          <input id="chai-meal" placeholder="e.g., milk tea">
+          <label>Calories</label>
+          <input id="chai-cal" type="number" min="0">
+        </div>
+
+        <div class="meal">
+          <label>Lunch - What did you eat?</label>
+          <input id="lunch-meal" placeholder="e.g., rice, dal, veggies">
+          <label>Calories</label>
+          <input id="lunch-cal" type="number" min="0">
+        </div>
+
+        <div class="meal">
+          <label>Dinner - What did you eat?</label>
+          <input id="dinner-meal" placeholder="e.g., roti, curry">
+          <label>Calories</label>
+          <input id="dinner-cal" type="number" min="0">
+        </div>
+
+        <div class="row summary">
+          <strong>Daily calories (ESTIMATE):</strong>
+          <span id="daily-cal">0</span>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Workout</legend>
+        <label><input type="checkbox" id="workout-weight"> Weight-training</label>
+        <label><input type="checkbox" id="workout-swim"> Swim</label>
+        <label><input type="checkbox" id="workout-sauna"> Sauna</label>
+        <label><input type="checkbox" id="workout-walk"> Walk / Run</label>
+        <div class="row">
+          <label>Duration (minutes)</label>
+          <input id="workout-duration" type="number" min="0">
+        </div>
+        <div class="row">
+          <label>Distance / Notes</label>
+          <input id="workout-notes" placeholder="e.g., 3 km walk">
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Night Routine</legend>
+        <label><input type="checkbox" id="night-walnuts"> Walnuts</label>
+        <label><input type="checkbox" id="night-tea"> Herbal tea</label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Other</legend>
+        <label>Energy (1-10)</label>
+        <input id="energy" type="number" min="1" max="10">
+        <label>Notes</label>
+        <textarea id="notes" rows="4" placeholder="Any notes..."></textarea>
+      </fieldset>
+
+      <div class="row actions">
+        <button id="btn-save" class="btn primary">Save Entry</button>
+        <button id="btn-new-day" class="btn">New Day</button>
+      </div>
+    </section>
+
+    <section id="list-section" class="card">
+      <h2>Entries</h2>
+      <div class="view-tabs">
+        <button class="tab active" data-range="7">Weekly</button>
+        <button class="tab" data-range="14">Biweekly</button>
+        <button class="tab" data-range="30">Monthly</button>
+        <button class="tab" data-range="0">All</button>
+      </div>
+      <ul id="entries-list" class="entries-list"></ul>
+    </section>
+
+    <div id="about-modal" class="modal" hidden>
+      <div class="modal-content">
+        <button class="btn close" id="close-about">Close</button>
+        <h3>About & Privacy</h3>
+        <p>This Daily Journal is hosted on GitHub Pages. Your journal data is stored only on this device in your browser's storage (IndexedDB). It is not transmitted to the repository or any external server unless you explicitly export it. Do not share backups unless you trust the recipient.</p>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="footer">
+    <small>Make sure to Backup my data before switching devices. This app works offline after first visit.</small>
+  </footer>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>
